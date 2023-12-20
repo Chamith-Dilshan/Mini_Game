@@ -20,14 +20,15 @@ namespace Mini_Game
         { 16, 17, 18, 19, 20 },
         { 21, 22, 23, 24, 25 }
         };
-        private int previousLocationOfThePlayer;
-        private int tempPreviousLocationOfThePlayer;
-        private int currentLocationOfThePlayer;
+        private int movementbonus = 1;
+        private int previousLocationOfThePlayer = 1;
+        private int tempPreviousLocationOfThePlayer = 0;
+        private int currentLocationOfThePlayer = 1;
         private int locationOfTheFood;
-        private string[] playerStates = { /* Add player states */ };
-        private string[] foodTypes = { /* Add food types */ };
+        private string[] playerStates = { "Strong", "Normal", "Weak" };
+        private string[] foodTypes = { "Spicy", "Middle", "Cool" };
         private string currentPlayerState;
-        private string currentFoodState;
+        private string currentFoodType;
 
         private void GameTermination()
         {
@@ -53,7 +54,6 @@ namespace Mini_Game
         public void ControlPlayerMoments()
         {
             bool playerMoment = true;
-
             while (playerMoment)
             {
                 CheckTerminalSize();
@@ -62,19 +62,16 @@ namespace Mini_Game
                 {
                     var key = Console.ReadKey().Key;
 
-                    if (previousLocationOfThePlayer == 0)
-                    {
-                        previousLocationOfThePlayer = 1;
-                    }
-
                     if (key == ConsoleKey.UpArrow || key == ConsoleKey.DownArrow || key == ConsoleKey.LeftArrow || key == ConsoleKey.RightArrow)
                     {
+                        CurrentPlayerAppearance();
+
                         switch (key)
                         {
                             case ConsoleKey.UpArrow:
-                                if (CanMove(previousLocationOfThePlayer, currentLocationOfThePlayer, changeValue: -5))
+                                if (CanMove(previousLocationOfThePlayer, currentLocationOfThePlayer, changeValue: -(5 * movementbonus)))
                                 {
-                                    currentLocationOfThePlayer = previousLocationOfThePlayer - 5;
+                                    currentLocationOfThePlayer = previousLocationOfThePlayer - (5 * movementbonus);
                                     tempPreviousLocationOfThePlayer = previousLocationOfThePlayer;
                                     previousLocationOfThePlayer = currentLocationOfThePlayer;
                                     InitialGameState();
@@ -82,9 +79,9 @@ namespace Mini_Game
                                 break;
 
                             case ConsoleKey.DownArrow:
-                                if (CanMove(previousLocationOfThePlayer, currentLocationOfThePlayer, changeValue: +5))
+                                if (CanMove(previousLocationOfThePlayer, currentLocationOfThePlayer, changeValue: +(5 * movementbonus)))
                                 {
-                                    currentLocationOfThePlayer = previousLocationOfThePlayer + 5;
+                                    currentLocationOfThePlayer = previousLocationOfThePlayer + (5 * movementbonus);
                                     tempPreviousLocationOfThePlayer = previousLocationOfThePlayer;
                                     previousLocationOfThePlayer = currentLocationOfThePlayer;
                                     InitialGameState();
@@ -92,18 +89,18 @@ namespace Mini_Game
                                 break;
 
                             case ConsoleKey.LeftArrow:
-                                if (CanMove(previousLocationOfThePlayer, currentLocationOfThePlayer, changeValue: -1))
+                                if (CanMove(previousLocationOfThePlayer, currentLocationOfThePlayer, changeValue: -(1 * movementbonus)))
                                 {
-                                    currentLocationOfThePlayer = previousLocationOfThePlayer - 1;
+                                    currentLocationOfThePlayer = previousLocationOfThePlayer - (1 * movementbonus);
                                     tempPreviousLocationOfThePlayer = previousLocationOfThePlayer;
                                     previousLocationOfThePlayer = currentLocationOfThePlayer;
                                     InitialGameState();
                                 }
                                 break;
                             case ConsoleKey.RightArrow:
-                                if (CanMove(previousLocationOfThePlayer, currentLocationOfThePlayer, changeValue: +1))
+                                if (CanMove(previousLocationOfThePlayer, currentLocationOfThePlayer, changeValue: +(1 * movementbonus)))
                                 {
-                                    currentLocationOfThePlayer = previousLocationOfThePlayer + 1;
+                                    currentLocationOfThePlayer = previousLocationOfThePlayer + (1 * movementbonus);
                                     tempPreviousLocationOfThePlayer = previousLocationOfThePlayer;
                                     previousLocationOfThePlayer = currentLocationOfThePlayer;
                                     InitialGameState();
@@ -152,18 +149,46 @@ namespace Mini_Game
 
         public void SpawnFood()
         {
-            // Implement food spawning logic
+            Random random = new Random();
+
+            locationOfTheFood = random.Next(1, 26);
+            int randomFoodElement = random.Next(0, foodTypes.Length);
+            currentFoodType = foodTypes[randomFoodElement];
         }
 
-        public string CurrentPlayerAppearance()
+        private void CurrentPlayerAppearance()
         {
-            // Implement logic to get current player appearance
-            return currentPlayerState;
-        }
+            if (currentLocationOfThePlayer == locationOfTheFood)
+            {
 
-        public void ChangeThePlayerMoments()
-        {
-            // Implement logic to change player moments
+                if (currentFoodType == foodTypes[0])
+                {
+                    currentPlayerState = playerStates[0];
+                    movementbonus = 2;
+                    Console.WriteLine($"You Eat the {foodTypes[0]} Food!");
+
+                }
+                else if (currentFoodType == foodTypes[1])
+                {
+                    currentPlayerState = playerStates[1];
+                    movementbonus = 1;
+                    Console.WriteLine($"You Eat the {foodTypes[1]} Food!");
+                }
+                else if (currentFoodType == foodTypes[2])
+                {
+                    currentPlayerState = playerStates[2];
+                    movementbonus = -2;
+                    Console.WriteLine($"You Eat the {foodTypes[2]} Food!");
+                }
+                else
+                {
+                    currentPlayerState = playerStates[1];
+                    movementbonus = 1;
+                    Console.WriteLine($"You Eat the {foodTypes[1]} Food!");
+                }
+
+                SpawnFood();
+            }
         }
 
         public void InitialGameState()
@@ -172,9 +197,8 @@ namespace Mini_Game
             Console.WriteLine($"Player Previous Position: {tempPreviousLocationOfThePlayer}");
             Console.WriteLine($"Player Current Position: {currentLocationOfThePlayer}");
 
-            Console.WriteLine($"Location Of The Food: {locationOfTheFood}\n");
+            Console.WriteLine($"Location Of The Food: {locationOfTheFood}");
+            Console.WriteLine($"Food Type: {currentFoodType}\n");
         }
     }
-}
-
 }

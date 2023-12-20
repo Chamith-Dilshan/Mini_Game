@@ -10,6 +10,7 @@
 
             MiniGame miniGame = new MiniGame();
 
+            miniGame.SpawnFood();
             miniGame.InitialGameState();
             miniGame.ControlPlayerMoments();
         }
