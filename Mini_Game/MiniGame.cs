@@ -21,6 +21,7 @@ namespace Mini_Game
         { 21, 22, 23, 24, 25 }
         };
         private int previousLocationOfThePlayer;
+        private int tempPreviousLocationOfThePlayer;
         private int currentLocationOfThePlayer;
         private int locationOfTheFood;
         private string[] playerStates = { /* Add player states */ };
@@ -28,7 +29,14 @@ namespace Mini_Game
         private string currentPlayerState;
         private string currentFoodState;
 
-        public void GameTermination()
+        private void GameTermination()
+        {
+            Console.WriteLine();
+            InitialGameState();
+            Console.WriteLine("Exiting The Game...");
+        }
+
+        private void CheckTerminalSize()
         {
             int currentWidth = Console.WindowWidth;
             int currentHeight = Console.WindowHeight;
@@ -38,12 +46,7 @@ namespace Mini_Game
                 Console.Clear();
                 InitialGameState();
                 Console.WriteLine("Console was resized. Program exiting");
-                Environment.Exit(0); // Exiting the program when the console is resized
-            }
-            else {
-                Console.WriteLine();
-                InitialGameState();
-                Console.WriteLine("Exiting The Game");
+                Environment.Exit(0);
             }
         }
 
@@ -53,11 +56,13 @@ namespace Mini_Game
 
             while (playerMoment)
             {
+                CheckTerminalSize();
+
                 if (Console.KeyAvailable)
                 {
                     var key = Console.ReadKey().Key;
 
-                    if (previousLocationOfThePlayer == null)
+                    if (previousLocationOfThePlayer == 0)
                     {
                         previousLocationOfThePlayer = 1;
                     }
@@ -70,8 +75,9 @@ namespace Mini_Game
                                 if (CanMove(previousLocationOfThePlayer, currentLocationOfThePlayer, changeValue: -5))
                                 {
                                     currentLocationOfThePlayer = previousLocationOfThePlayer - 5;
-                                    InitialGameState();
+                                    tempPreviousLocationOfThePlayer = previousLocationOfThePlayer;
                                     previousLocationOfThePlayer = currentLocationOfThePlayer;
+                                    InitialGameState();
                                 }
                                 break;
 
@@ -79,8 +85,9 @@ namespace Mini_Game
                                 if (CanMove(previousLocationOfThePlayer, currentLocationOfThePlayer, changeValue: +5))
                                 {
                                     currentLocationOfThePlayer = previousLocationOfThePlayer + 5;
-                                    InitialGameState();
+                                    tempPreviousLocationOfThePlayer = previousLocationOfThePlayer;
                                     previousLocationOfThePlayer = currentLocationOfThePlayer;
+                                    InitialGameState();
                                 }
                                 break;
 
@@ -88,16 +95,18 @@ namespace Mini_Game
                                 if (CanMove(previousLocationOfThePlayer, currentLocationOfThePlayer, changeValue: -1))
                                 {
                                     currentLocationOfThePlayer = previousLocationOfThePlayer - 1;
-                                    InitialGameState();
+                                    tempPreviousLocationOfThePlayer = previousLocationOfThePlayer;
                                     previousLocationOfThePlayer = currentLocationOfThePlayer;
+                                    InitialGameState();
                                 }
                                 break;
                             case ConsoleKey.RightArrow:
                                 if (CanMove(previousLocationOfThePlayer, currentLocationOfThePlayer, changeValue: +1))
                                 {
                                     currentLocationOfThePlayer = previousLocationOfThePlayer + 1;
-                                    InitialGameState();
+                                    tempPreviousLocationOfThePlayer = previousLocationOfThePlayer;
                                     previousLocationOfThePlayer = currentLocationOfThePlayer;
+                                    InitialGameState();
                                 }
                                 break;
                             default:
@@ -107,7 +116,8 @@ namespace Mini_Game
                         }
                     }
 
-                    else if(key == ConsoleKey.Escape) {
+                    else if (key == ConsoleKey.Escape)
+                    {
                         Console.WriteLine("Are You Sure That You Want to Exit?(y/n)");
                         string userInput = Console.ReadLine().Trim().ToLower();
 
@@ -119,14 +129,15 @@ namespace Mini_Game
                         else if (userInput == "n")
                         {
                             continue;
-                        }                      
+                        }
                     }
 
-                    else {
+                    else
+                    {
                         playerMoment = false;
                         GameTermination();
                     }
-                  
+
                 }
             }
         }
@@ -158,11 +169,12 @@ namespace Mini_Game
         public void InitialGameState()
         {
             // Implement logic for initializing the game state
-            Console.WriteLine($"Player Previous Position: {previousLocationOfThePlayer}");
-            Console.WriteLine($"Player Current Position: {currentLocationOfThePlayer}\n");
+            Console.WriteLine($"Player Previous Position: {tempPreviousLocationOfThePlayer}");
+            Console.WriteLine($"Player Current Position: {currentLocationOfThePlayer}");
 
-            Console.WriteLine($"Location Of The Food: {locationOfTheFood}");
+            Console.WriteLine($"Location Of The Food: {locationOfTheFood}\n");
         }
     }
+}
 
 }
